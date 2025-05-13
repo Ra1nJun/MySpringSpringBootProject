@@ -1,7 +1,10 @@
 package com.basic.myspringboot.auth.config;
 
+import com.basic.myspringboot.auth.service.UserInfoUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,18 +37,35 @@ public class SecurityConfig {
                 .build();
     }
 
+    //개발자가 커스텀한 UserServiceDetail 을 SpringBean 으로 등록
     @Bean
-    //authentication
-    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        UserDetails admin = User.withUsername("adminboot")
-            .password(encoder.encode("pwd1"))
-            .roles("ADMIN")
-            .build();
-
-        UserDetails user = User.withUsername("userboot")
-            .password(encoder.encode("pwd2"))
-            .roles("USER")
-            .build();
-        return new InMemoryUserDetailsManager(admin, user);
+    public UserDetailsService userDetailsService() {
+        return new UserInfoUserDetailsService();
     }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        //UserServiceDetail 서비스가 어떤 객체인지
+        authenticationProvider.setUserDetailsService(userDetailsService());
+        //패스워드 인코더가 어떤 객체인지
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
+
+
+//    @Bean
+//    //authentication
+//    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+//        UserDetails admin = User.withUsername("adminboot")
+//            .password(encoder.encode("pwd1"))
+//            .roles("ADMIN")
+//            .build();
+//
+//        UserDetails user = User.withUsername("userboot")
+//            .password(encoder.encode("pwd2"))
+//            .roles("USER")
+//            .build();
+//        return new InMemoryUserDetailsManager(admin, user);
+//    }
 }
