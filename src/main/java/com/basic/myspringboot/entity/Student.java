@@ -14,6 +14,7 @@ public class Student {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "student_id")
     private Long id;
     
     @Column(nullable = false)
@@ -22,5 +23,6 @@ public class Student {
     @Column(unique = true, nullable = false)
     private String studentNumber;
 
+    @OneToOne(fetch = FetchType.LAZY,  mappedBy = "student", cascade = CascadeType.ALL)
     private StudentDetail studentDetail;
 }

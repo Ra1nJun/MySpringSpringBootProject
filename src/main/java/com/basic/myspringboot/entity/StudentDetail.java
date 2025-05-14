@@ -16,6 +16,7 @@ public class StudentDetail {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "student_detail_id")
     private Long id;
     
     @Column(nullable = false)
@@ -29,6 +30,8 @@ public class StudentDetail {
     
     @Column
     private LocalDate dateOfBirth;
-    
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", unique = true)
     private Student student;
 }
